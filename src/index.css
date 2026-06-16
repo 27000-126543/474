@@ -1,0 +1,86 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "Noto Sans SC", system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #16213E;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3D3832;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #E8A838;
+}
+
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: #3D3832 #16213E;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-amber-500 text-midnight font-semibold px-5 py-2.5 rounded-xl
+           shadow-lg shadow-amber-500/20
+           hover:bg-amber-400 hover:shadow-amber-400/30 hover:-translate-y-0.5
+           active:translate-y-0 active:shadow-md
+           transition-all duration-200 ease-out;
+  }
+
+  .btn-secondary {
+    @apply bg-deepnavy text-warmgray-200 font-medium px-5 py-2.5 rounded-xl
+           border border-warmgray-700
+           hover:border-amber-500/50 hover:text-amber-400
+           active:translate-y-0
+           transition-all duration-200 ease-out;
+  }
+
+  .btn-danger {
+    @apply bg-red-900/40 text-red-400 font-medium px-5 py-2.5 rounded-xl
+           border border-red-800/50
+           hover:bg-red-900/60 hover:text-red-300
+           transition-all duration-200 ease-out;
+  }
+
+  .card {
+    @apply bg-deepnavy/80 backdrop-blur-sm rounded-2xl border border-warmgray-700/30
+           hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5
+           transition-all duration-300 ease-out;
+  }
+
+  .input-field {
+    @apply w-full bg-deepnavy/60 text-warmgray-200 px-4 py-3 rounded-xl
+           border border-warmgray-700/50
+           placeholder:text-warmgray-500
+           focus:outline-none focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/20
+           transition-all duration-200;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-amber-500/15 text-amber-400 border border-amber-500/20;
+  }
+
+  .section-title {
+    @apply font-serif text-2xl font-semibold text-warmgray-100 tracking-wide;
+  }
+}
