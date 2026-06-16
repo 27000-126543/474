@@ -8,6 +8,7 @@ import {
   Headphones,
   User
 } from 'lucide-react'
+import NotificationCenter from './NotificationCenter'
 
 const navItems = [
   { path: '/', icon: Compass, label: '发现' },
@@ -21,16 +22,19 @@ export default function Sidebar() {
   return (
     <aside className="w-60 bg-deepnavy/90 backdrop-blur-sm border-r border-warmgray-700/30 flex flex-col h-screen fixed left-0 top-0 z-40">
       <div className="p-6 border-b border-warmgray-700/30">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
-            <Headphones className="w-6 h-6 text-amber-500" />
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
+              <Headphones className="w-6 h-6 text-amber-500" />
+            </div>
+            <div>
+              <h1 className="font-serif text-lg font-bold text-warmgray-100">
+                播客空间
+              </h1>
+              <p className="text-xs text-warmgray-500">聆听你的世界</p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-serif text-lg font-bold text-warmgray-100">
-              播客空间
-            </h1>
-            <p className="text-xs text-warmgray-500">聆听你的世界</p>
-          </div>
+          <NotificationCenter />
         </div>
       </div>
 

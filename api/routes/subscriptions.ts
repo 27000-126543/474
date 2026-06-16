@@ -53,7 +53,7 @@ router.post('/', (req: Request, res: Response): void => {
       return
     }
 
-    const podcast = db.prepare('SELECT * FROM podcasts WHERE id = ?').get(podcastId)
+    const podcast = db.prepare('SELECT * FROM podcasts WHERE id = ?').get(podcastId) as any
     if (!podcast) {
       res.status(404).json({ success: false, error: '播客不存在' })
       return

@@ -34,7 +34,7 @@ interface PodcastState {
   fetchSubscriptions: () => Promise<void>
   subscribe: (podcastId: string) => Promise<boolean>
   unsubscribe: (podcastId: string) => Promise<boolean>
-  toggleAutoDownload: (podcastId: string, autoDownload: boolean) => Promise<void>
+  toggleAutoDownload: (podcastId: string, autoDownload: boolean) => Promise<boolean>
   isSubscribed: (podcastId: string) => boolean
 }
 
@@ -126,13 +126,25 @@ export const usePodcastStore = create<PodcastState>((set, get) => ({
 
   toggleAutoDownload: async (podcastId: string, autoDownload: boolean) => {
     try {
-      await fetch(`/api/subscriptions/${podcastId}`, {
+      const res = await fetch(`/api/subscriptions/${podcastId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ autoDownload })
       })
+      const data = await res.json()
+      if (data.success) {
+        const { subscriptions } = get()
+        set({
+          subscriptions: subscriptions.map((s) =>
+            s.id === podcastId ? { ...s, autoDownload } : s
+          ) as any
+        })
+        return true
+      }
+      return false
     } catch (e) {
       console.error('toggleAutoDownload error:', e)
+      return false
     }
   },
 

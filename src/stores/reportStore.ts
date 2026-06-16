@@ -12,39 +12,84 @@ interface DailyBreakdown {
 }
 
 interface WeeklyReport {
+  id?: string
   weekStart: string
   weekEnd: string
   totalDuration: number
   favoritePodcasts: FavoritePodcast[]
   consecutiveDays: number
   longestStreak: number
+  totalEpisodes?: number
+  completedEpisodes?: number
   dailyBreakdown: DailyBreakdown[]
+}
+
+interface ReportSummary {
+  id: string
+  weekStart: string
+  weekEnd: string
+  totalDuration: number
+  consecutiveDays: number
+  longestStreak: number
+  totalEpisodes: number
+  completedEpisodes: number
+  createdAt: string
 }
 
 interface ReportState {
   weeklyReport: WeeklyReport | null
+  reportList: ReportSummary[]
+  selectedWeekStart: string | null
   loading: boolean
-  fetchWeeklyReport: () => Promise<void>
+  listLoading: boolean
+  fetchReportList: () => Promise<void>
+  fetchWeeklyReport: (weekStart?: string) => Promise<void>
+  selectWeek: (weekStart: string | null) => Promise<void>
   formatDuration: (seconds: number) => string
 }
 
-export const useReportStore = create<ReportState>((set) => ({
+export const useReportStore = create<ReportState>((set, get) => ({
   weeklyReport: null,
+  reportList: [],
+  selectedWeekStart: null,
   loading: false,
+  listLoading: false,
 
-  fetchWeeklyReport: async () => {
-    set({ loading: true })
+  fetchReportList: async () => {
+    set({ listLoading: true })
     try {
-      const res = await fetch('/api/report/weekly')
+      const res = await fetch('/api/report/list')
       const data = await res.json()
       if (data.success) {
-        set({ weeklyReport: data.data })
+        set({ reportList: data.data })
+      }
+    } catch (e) {
+      console.error('fetchReportList error:', e)
+    } finally {
+      set({ listLoading: false })
+    }
+  },
+
+  fetchWeeklyReport: async (weekStart?: string) => {
+    set({ loading: true })
+    try {
+      const url = weekStart
+        ? `/api/report/weekly?weekStart=${weekStart}`
+        : '/api/report/weekly'
+      const res = await fetch(url)
+      const data = await res.json()
+      if (data.success) {
+        set({ weeklyReport: data.data, selectedWeekStart: weekStart || data.data.weekStart || null })
       }
     } catch (e) {
       console.error('fetchWeeklyReport error:', e)
     } finally {
       set({ loading: false })
     }
+  },
+
+  selectWeek: async (weekStart: string | null) => {
+    await get().fetchWeeklyReport(weekStart || undefined)
   },
 
   formatDuration: (seconds: number) => {

@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   BarChart3,
   Clock,
@@ -6,17 +6,32 @@ import {
   Flame,
   Trophy,
   Download,
-  TrendingUp
+  TrendingUp,
+  ChevronRight,
+  History,
+  Sparkles
 } from 'lucide-react'
 import { useReportStore } from '@/stores/reportStore'
 
 export default function Report() {
-  const { weeklyReport, loading, fetchWeeklyReport, formatDuration } = useReportStore()
+  const {
+    weeklyReport,
+    reportList,
+    selectedWeekStart,
+    loading,
+    listLoading,
+    fetchReportList,
+    fetchWeeklyReport,
+    selectWeek,
+    formatDuration
+  } = useReportStore()
   const reportRef = useRef<HTMLDivElement>(null)
+  const [listOpen, setListOpen] = useState(false)
 
   useEffect(() => {
+    fetchReportList()
     fetchWeeklyReport()
-  }, [fetchWeeklyReport])
+  }, [fetchReportList, fetchWeeklyReport])
 
   const handleExportPDF = async () => {
     try {
@@ -54,7 +69,10 @@ export default function Report() {
         heightLeft -= pageHeight
       }
 
-      pdf.save('收听周报.pdf')
+      const weekLabel = weeklyReport?.weekStart
+        ? `周报_${weeklyReport.weekStart}_${weeklyReport.weekEnd}`
+        : '收听周报'
+      pdf.save(`${weekLabel}.pdf`)
     } catch (e) {
       console.error('PDF export error:', e)
     }
@@ -72,7 +90,7 @@ export default function Report() {
 
   return (
     <div className="pb-24">
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center justify-between mb-8 flex-wrap gap-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-amber-500/15 flex items-center justify-center">
             <BarChart3 className="w-6 h-6 text-amber-500" />
@@ -86,10 +104,100 @@ export default function Report() {
             </p>
           </div>
         </div>
-        <button onClick={handleExportPDF} className="btn-primary flex items-center gap-2">
-          <Download className="w-4 h-4" />
-          导出 PDF
-        </button>
+
+        <div className="flex items-center gap-3">
+          <div className="relative">
+            <button
+              onClick={() => setListOpen(!listOpen)}
+              className="btn-secondary flex items-center gap-2"
+            >
+              <History className="w-4 h-4" />
+              历史周报
+              {reportList.length > 0 && (
+                <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-xs">
+                  {reportList.length}
+                </span>
+              )}
+            </button>
+
+            {listOpen && (
+              <div className="absolute right-0 top-full mt-2 w-72 card overflow-hidden animate-slide-up z-30">
+                <div className="p-3 border-b border-warmgray-700/30">
+                  <p className="text-sm font-medium text-warmgray-300 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-amber-500" />
+                    选择报告日期
+                  </p>
+                </div>
+                <div className="max-h-80 overflow-y-auto">
+                  {listLoading && reportList.length === 0 ? (
+                    <div className="p-6 text-center">
+                      <div className="w-6 h-6 border-2 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto" />
+                    </div>
+                  ) : reportList.length === 0 ? (
+                    <div className="p-6 text-center text-warmgray-500 text-sm">
+                      暂无历史报告
+                    </div>
+                  ) : (
+                    <div className="divide-y divide-warmgray-700/20">
+                      <button
+                        onClick={() => {
+                          selectWeek(null)
+                          setListOpen(false)
+                        }}
+                        className={`w-full p-3 flex items-center justify-between text-left transition-colors hover:bg-warmgray-700/10 ${
+                          !selectedWeekStart ? 'bg-amber-500/5' : ''
+                        }`}
+                      >
+                        <div>
+                          <p className="text-sm font-medium text-warmgray-100 flex items-center gap-2">
+                            <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                            本周（最新）
+                          </p>
+                          <p className="text-xs text-warmgray-500 mt-0.5">
+                            {weeklyReport?.weekStart || ''} ~ {weeklyReport?.weekEnd || ''}
+                          </p>
+                        </div>
+                        {!selectedWeekStart && (
+                          <ChevronRight className="w-4 h-4 text-amber-400" />
+                        )}
+                      </button>
+                      {reportList.map((r) => (
+                        <button
+                          key={r.id}
+                          onClick={() => {
+                            selectWeek(r.weekStart)
+                            setListOpen(false)
+                          }}
+                          className={`w-full p-3 flex items-center justify-between text-left transition-colors hover:bg-warmgray-700/10 ${
+                            selectedWeekStart === r.weekStart ? 'bg-amber-500/5' : ''
+                          }`}
+                        >
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-warmgray-100">
+                              {r.weekStart} ~ {r.weekEnd}
+                            </p>
+                            <p className="text-xs text-warmgray-500 mt-0.5 flex items-center gap-3">
+                              <span>时长 {formatDuration(r.totalDuration)}</span>
+                              <span className="text-green-400">{r.consecutiveDays}天连续</span>
+                            </p>
+                          </div>
+                          {selectedWeekStart === r.weekStart && (
+                            <ChevronRight className="w-4 h-4 text-amber-400 flex-shrink-0" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          <button onClick={handleExportPDF} className="btn-primary flex items-center gap-2">
+            <Download className="w-4 h-4" />
+            导出 PDF
+          </button>
+        </div>
       </div>
 
       <div ref={reportRef} className="space-y-6">
@@ -130,7 +238,7 @@ export default function Report() {
             <div className="w-12 h-12 rounded-xl bg-purple-500/15 flex items-center justify-center mb-4">
               <Calendar className="w-6 h-6 text-purple-400" />
             </div>
-            <p className="text-sm text-warmgray-400 mb-1">已完成节目</p>
+            <p className="text-sm text-warmgray-400 mb-1">已收听天数</p>
             <p className="font-serif text-3xl font-bold text-warmgray-100">
               {weeklyReport?.dailyBreakdown?.filter(d => d.duration > 0).length || 0}
               <span className="text-base font-normal text-warmgray-500 ml-1">天</span>
@@ -152,7 +260,7 @@ export default function Report() {
                 return (
                   <div key={idx} className="flex-1 flex flex-col items-center gap-2">
                     <span className="text-xs text-warmgray-500">
-                      {formatDuration(Math.round(day.duration / 60) * 60)}
+                      {day.duration > 0 ? formatDuration(Math.round(day.duration / 60) * 60) : ''}
                     </span>
                     <div className="w-full h-full flex items-end">
                       <div
@@ -227,7 +335,7 @@ export default function Report() {
               return (
                 <div
                   key={idx}
-                  className="aspect-square rounded-lg flex items-center justify-center text-xs"
+                  className="aspect-square rounded-lg flex flex-col items-center justify-center text-xs transition-all"
                   style={{
                     backgroundColor:
                       intensity > 0.7
@@ -240,7 +348,12 @@ export default function Report() {
                     color: intensity > 0.5 ? '#1A1A2E' : '#A09890'
                   }}
                 >
-                  {weekDays[idx]?.slice(1) || ''}
+                  <span className="font-medium">{weekDays[idx]?.slice(1) || ''}</span>
+                  {day.duration > 0 && (
+                    <span className="text-[10px] opacity-80 mt-0.5">
+                      {formatDuration(day.duration).replace('分钟', '分')}
+                    </span>
+                  )}
                 </div>
               )
             })}
