@@ -3,6 +3,7 @@ import { Search, Sparkles, TrendingUp } from 'lucide-react'
 import { usePodcastStore } from '@/stores/podcastStore'
 import PodcastCard from '@/components/PodcastCard'
 import TagFilter from '@/components/TagFilter'
+import { useNotificationStore } from '@/stores/notificationStore'
 
 const allTags = ['科技', '商业', '文化', '社会', '心理', '音乐', '历史', '教育']
 
@@ -17,14 +18,19 @@ export default function Discover() {
     fetchRecommendations,
     fetchSubscriptions
   } = usePodcastStore()
+  const { fetchNotifications } = useNotificationStore()
 
   const [searchInput, setSearchInput] = useState('')
 
   useEffect(() => {
-    fetchPodcasts()
-    fetchRecommendations()
-    fetchSubscriptions()
-  }, [fetchPodcasts, fetchRecommendations, fetchSubscriptions])
+    const init = async () => {
+      await fetchPodcasts()
+      await fetchRecommendations()
+      await fetchSubscriptions()
+      fetchNotifications()
+    }
+    init()
+  }, [fetchPodcasts, fetchRecommendations, fetchSubscriptions, fetchNotifications])
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()

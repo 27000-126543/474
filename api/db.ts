@@ -355,12 +355,12 @@ if (userCount === 0) {
   const downloads = [
     { id: uuidv4(), userId: 'user-1', episodeId: 'ep-1', podcastId: 'pod-1', status: 'completed' },
     { id: uuidv4(), userId: 'user-1', episodeId: 'ep-2', podcastId: 'pod-1', status: 'completed' },
-    { id: uuidv4(), userId: 'user-1', episodeId: 'ep-9', podcastId: 'pod-5', status: 'completed' },
+    { id: uuidv4(), userId: 'user-1', episodeId: 'ep-9', podcastId: 'pod-4', status: 'completed' },
     { id: uuidv4(), userId: 'user-1', episodeId: 'ep-10', podcastId: 'pod-5', status: 'completed' },
-    { id: uuidv4(), userId: 'user-1', episodeId: 'ep-17', podcastId: 'pod-9', status: 'completed' },
-    { id: uuidv4(), userId: 'user-1', episodeId: 'ep-13', podcastId: 'pod-7', status: 'completed' },
+    { id: uuidv4(), userId: 'user-1', episodeId: 'ep-17', podcastId: 'pod-8', status: 'completed' },
+    { id: uuidv4(), userId: 'user-1', episodeId: 'ep-13', podcastId: 'pod-6', status: 'completed' },
     { id: uuidv4(), userId: 'user-1', episodeId: 'ep-14', podcastId: 'pod-7', status: 'completed' },
-    { id: uuidv4(), userId: 'user-1', episodeId: 'ep-22', podcastId: 'pod-11', status: 'completed' },
+    { id: uuidv4(), userId: 'user-1', episodeId: 'ep-22', podcastId: 'pod-10', status: 'completed' },
     { id: uuidv4(), userId: 'user-1', episodeId: 'ep-23', podcastId: 'pod-11', status: 'completed' },
   ]
   for (const d of downloads) {
@@ -394,22 +394,22 @@ if (userCount === 0) {
 
   const weeklyReports = [
     {
-      id: uuidv4(), userId: 'user-1', weekStart: '2026-06-10', weekEnd: '2026-06-16',
+      id: uuidv4(), userId: 'user-1', weekStart: '2026-06-08', weekEnd: '2026-06-14',
       totalDuration: 29100, consecutiveDays: 7, longestStreak: 7, totalEpisodes: 12, completedEpisodes: 9,
       favoritePodcasts: JSON.stringify([{ podcastId: 'pod-11', name: '读书会', duration: 6000 }, { podcastId: 'pod-7', name: '历史长廊', duration: 5800 }, { podcastId: 'pod-9', name: 'AI时代', duration: 4800 }]),
-      dailyBreakdown: JSON.stringify([{ date: '2026-06-10', duration: 5300 }, { date: '2026-06-11', duration: 5900 }, { date: '2026-06-12', duration: 5300 }, { date: '2026-06-13', duration: 4200 }, { date: '2026-06-14', duration: 4100 }, { date: '2026-06-15', duration: 2400 }, { date: '2026-06-16', duration: 0 }]),
+      dailyBreakdown: JSON.stringify([{ date: '2026-06-08', duration: 4300 }, { date: '2026-06-09', duration: 3700 }, { date: '2026-06-10', duration: 5300 }, { date: '2026-06-11', duration: 5900 }, { date: '2026-06-12', duration: 5300 }, { date: '2026-06-13', duration: 4200 }, { date: '2026-06-14', duration: 400 }]),
     },
     {
-      id: uuidv4(), userId: 'user-1', weekStart: '2026-06-03', weekEnd: '2026-06-09',
+      id: uuidv4(), userId: 'user-1', weekStart: '2026-06-01', weekEnd: '2026-06-07',
       totalDuration: 25400, consecutiveDays: 5, longestStreak: 12, totalEpisodes: 10, completedEpisodes: 7,
       favoritePodcasts: JSON.stringify([{ podcastId: 'pod-1', name: '科技前沿', duration: 5500 }, { podcastId: 'pod-12', name: '科技与人文', duration: 5000 }, { podcastId: 'pod-5', name: '心灵驿站', duration: 4200 }]),
-      dailyBreakdown: generateDailyBreakdown(3600),
+      dailyBreakdown: JSON.stringify([{ date: '2026-06-01', duration: 2400 }, { date: '2026-06-02', duration: 1700 }, { date: '2026-06-03', duration: 1800 }, { date: '2026-06-04', duration: 2000 }, { date: '2026-06-05', duration: 2200 }, { date: '2026-06-06', duration: 5100 }, { date: '2026-06-07', duration: 4300 }]),
     },
     {
-      id: uuidv4(), userId: 'user-1', weekStart: '2026-05-27', weekEnd: '2026-06-02',
+      id: uuidv4(), userId: 'user-1', weekStart: '2026-05-25', weekEnd: '2026-05-31',
       totalDuration: 21800, consecutiveDays: 6, longestStreak: 7, totalEpisodes: 8, completedEpisodes: 6,
       favoritePodcasts: JSON.stringify([{ podcastId: 'pod-11', name: '读书会', duration: 4800 }, { podcastId: 'pod-7', name: '历史长廊', duration: 4200 }, { podcastId: 'pod-9', name: 'AI时代', duration: 3800 }]),
-      dailyBreakdown: generateDailyBreakdown(3100),
+      dailyBreakdown: JSON.stringify([{ date: '2026-05-25', duration: 2800 }, { date: '2026-05-26', duration: 3200 }, { date: '2026-05-27', duration: 0 }, { date: '2026-05-28', duration: 3100 }, { date: '2026-05-29', duration: 3400 }, { date: '2026-05-30', duration: 4200 }, { date: '2026-05-31', duration: 3100 }]),
     },
   ]
   for (const r of weeklyReports) {

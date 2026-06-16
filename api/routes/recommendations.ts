@@ -1,4 +1,5 @@
 import { Router, type Request, type Response } from 'express'
+import { v4 as uuidv4 } from 'uuid'
 import db from '../db.js'
 
 const router = Router()
@@ -99,7 +100,28 @@ router.get('/', (_req: Request, res: Response): void => {
       }
     }
 
-    res.json({ success: true, data: recommendedPodcasts.slice(0, 8) })
+    const finalList = recommendedPodcasts.slice(0, 8)
+
+    const now = new Date().toISOString()
+    for (const podcast of finalList) {
+      const existingNotif = db.prepare(
+        'SELECT id FROM notifications WHERE userId = ? AND type = ? AND podcastId = ?'
+      ).get(USER_ID, 'recommendation', podcast.id) as any
+
+      if (!existingNotif) {
+        const notifId = uuidv4()
+        db.prepare(
+          'INSERT INTO notifications (id, userId, type, title, content, podcastId, read, createdAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        ).run(
+          notifId, USER_ID, 'recommendation',
+          `为你推荐：${podcast.name}`,
+          podcast.matchReason || '根据你的收听偏好为你精选推荐',
+          podcast.id, 0, now
+        )
+      }
+    }
+
+    res.json({ success: true, data: finalList })
   } catch (error) {
     console.error('获取推荐失败:', error)
     res.status(500).json({ success: false, error: '获取推荐失败' })

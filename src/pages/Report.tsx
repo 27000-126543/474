@@ -29,8 +29,11 @@ export default function Report() {
   const [listOpen, setListOpen] = useState(false)
 
   useEffect(() => {
-    fetchReportList()
-    fetchWeeklyReport()
+    const init = async () => {
+      await fetchWeeklyReport()
+      fetchReportList()
+    }
+    init()
   }, [fetchReportList, fetchWeeklyReport])
 
   const handleExportPDF = async () => {

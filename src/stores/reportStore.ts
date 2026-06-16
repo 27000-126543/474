@@ -90,6 +90,7 @@ export const useReportStore = create<ReportState>((set, get) => ({
 
   selectWeek: async (weekStart: string | null) => {
     await get().fetchWeeklyReport(weekStart || undefined)
+    get().fetchReportList()
   },
 
   formatDuration: (seconds: number) => {

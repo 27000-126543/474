@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Users, Calendar, Play, Check } from 'lucide-react'
 import { usePodcastStore, type Episode } from '@/stores/podcastStore'
 import { usePlayerStore } from '@/stores/playerStore'
+import { useDownloadStore } from '@/stores/downloadStore'
 import EpisodeItem from '@/components/EpisodeItem'
 
 export default function PodcastDetail() {
@@ -10,24 +11,33 @@ export default function PodcastDetail() {
   const navigate = useNavigate()
   const { fetchSubscriptions, isSubscribed, subscribe, unsubscribe } = usePodcastStore()
   const { play } = usePlayerStore()
+  const { fetchDownloads, getDownloadedEpisodesForPodcast } = useDownloadStore()
 
   const [podcast, setPodcast] = useState<any>(null)
   const [episodes, setEpisodes] = useState<Episode[]>([])
   const [loading, setLoading] = useState(true)
   const [subscribed, setSubscribed] = useState(false)
+  const [downloadedCount, setDownloadedCount] = useState(0)
 
   useEffect(() => {
     if (id) {
       loadPodcast()
       fetchSubscriptions()
+      fetchDownloads()
     }
-  }, [id, fetchSubscriptions])
+  }, [id, fetchSubscriptions, fetchDownloads])
 
   useEffect(() => {
     if (id) {
       setSubscribed(isSubscribed(id))
     }
   }, [id, isSubscribed])
+
+  useEffect(() => {
+    if (id) {
+      setDownloadedCount(getDownloadedEpisodesForPodcast(id).length)
+    }
+  }, [id, getDownloadedEpisodesForPodcast])
 
   const loadPodcast = async () => {
     setLoading(true)
@@ -119,7 +129,7 @@ export default function PodcastDetail() {
             <p className="text-warmgray-500 mb-6 line-clamp-3">
               {podcast.description}
             </p>
-            <div className="flex items-center gap-6 text-sm text-warmgray-500 mb-6">
+            <div className="flex items-center gap-6 text-sm text-warmgray-500 mb-6 flex-wrap">
               <div className="flex items-center gap-1.5">
                 <Users className="w-4 h-4" />
                 <span>{podcast.subscribeCount} 人订阅</span>
@@ -128,6 +138,12 @@ export default function PodcastDetail() {
                 <Calendar className="w-4 h-4" />
                 <span>{episodes.length} 集</span>
               </div>
+              {downloadedCount > 0 && (
+                <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-green-500/10 text-green-400">
+                  <Check className="w-3.5 h-3.5" />
+                  已下载 {downloadedCount} 集
+                </div>
+              )}
             </div>
             <div className="flex gap-3">
               {subscribed ? (
